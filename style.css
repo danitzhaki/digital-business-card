@@ -1,0 +1,579 @@
+/* ==========================================================================
+   כרטיס ביקור דיגיטלי — עיצוב כללי
+   HTML + CSS בלבד, ללא JavaScript. מצב כהה/בהיר ממומש באמצעות checkbox hack.
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* פלטת צבעים - מצב בהיר (ברירת מחדל) */
+  --bg: #f4f6fb;
+  --bg-alt: #ffffff;
+  --text: #1c1e26;
+  --text-muted: #55596b;
+  --border: #e3e6ef;
+  --card-bg: #ffffff;
+  --card-shadow: 0 10px 30px rgba(28, 30, 38, 0.06);
+  --accent: #6c63ff;
+  --accent-2: #3b82f6;
+  --accent-contrast: #ffffff;
+  --chip-bg: #eef0fb;
+  --tag-bg: #eef1fb;
+  --tag-text: #4a4fd4;
+
+  --gradient-hero: linear-gradient(135deg, #6c63ff 0%, #3b82f6 100%);
+
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+
+  --transition: 0.25s ease;
+}
+
+/* ---------- מצב כהה: מופעל כאשר תיבת הסימון מסומנת ---------- */
+#theme-toggle:checked ~ .site {
+  --bg: #12141c;
+  --bg-alt: #191c27;
+  --text: #eef0f8;
+  --text-muted: #a7abc2;
+  --border: #2a2e3d;
+  --card-bg: #191c27;
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --accent: #8b83ff;
+  --accent-2: #5da2ff;
+  --accent-contrast: #12141c;
+  --chip-bg: #1f2330;
+  --tag-bg: #232739;
+  --tag-text: #b6b2ff;
+
+  --gradient-hero: linear-gradient(135deg, #4b3fd6 0%, #1e3a8a 100%);
+}
+
+/* מסתירים לגמרי את תיבת הסימון עצמה - השליטה תמיד דרך ה-label */
+.theme-toggle-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Poppins", "Segoe UI", Tahoma, Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  transition: background-color var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
+
+.site {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color var(--transition), color var(--transition);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+/* ==========================================================================
+   Header / Navbar
+   ========================================================================== */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--bg-alt);
+  background-color: color-mix(in srgb, var(--bg-alt) 85%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.brand__accent {
+  color: var(--accent);
+}
+
+/* ---------- מתג מצב כהה/בהיר ---------- */
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.theme-toggle-input:focus-visible ~ .site .theme-switch {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-switch__icon {
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.55;
+  transition: opacity var(--transition);
+}
+
+.theme-switch__track {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background-color var(--transition);
+}
+
+.theme-switch__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-contrast);
+  background-image: var(--gradient-hero);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform var(--transition);
+}
+
+#theme-toggle:checked ~ .site .theme-switch__track {
+  background: var(--accent);
+}
+
+#theme-toggle:checked ~ .site .theme-switch__thumb {
+  transform: translateX(20px);
+}
+
+#theme-toggle:checked ~ .site .theme-switch__icon--moon {
+  opacity: 1;
+}
+
+#theme-toggle:not(:checked) ~ .site .theme-switch__icon--sun {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Hero / About
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 72px 24px 56px;
+}
+
+.hero__glow {
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 420px;
+  background: var(--gradient-hero);
+  filter: blur(80px);
+  opacity: 0.25;
+  z-index: 0;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero__photo-wrap {
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  padding: 6px;
+  background: var(--gradient-hero);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 24px;
+}
+
+.hero__photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--bg-alt);
+  background: var(--bg-alt);
+}
+
+.hero__name {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.hero__role {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 22px;
+}
+
+.hero__bio {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 620px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.hero__ctas {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition), color var(--transition);
+  border: 2px solid transparent;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.btn--primary {
+  background: var(--gradient-hero);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(108, 99, 255, 0.35);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(108, 99, 255, 0.45);
+}
+
+.btn--ghost {
+  border-color: var(--border);
+  color: var(--text);
+  background: var(--bg-alt);
+}
+
+.btn--ghost:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Sections כלליים
+   ========================================================================== */
+
+.section {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  width: 100%;
+}
+
+.section__title {
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.section__title::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--gradient-hero);
+  margin: 14px auto 0;
+}
+
+.section__subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+
+/* ---------- כישורים ---------- */
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.skill {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  box-shadow: var(--card-shadow);
+  transition: transform var(--transition), border-color var(--transition), background-color var(--transition), color var(--transition);
+}
+
+.skill:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- פרויקטים ---------- */
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition), border-color var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 34px rgba(28, 30, 38, 0.12);
+}
+
+.card__icon {
+  font-size: 1.8rem;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--chip-bg);
+  margin-bottom: 18px;
+}
+
+.card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.card__text {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  flex-grow: 1;
+  margin-bottom: 16px;
+}
+
+.card__tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.tag {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.card__link {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent);
+  align-self: flex-start;
+  border-bottom: 2px solid transparent;
+  transition: border-color var(--transition);
+}
+
+.card__link:hover {
+  border-color: var(--accent);
+}
+
+/* ---------- יצירת קשר ---------- */
+.contacts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.contact-chip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  box-shadow: var(--card-shadow);
+  transition: transform var(--transition), border-color var(--transition);
+}
+
+.contact-chip:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.contact-chip__icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  border-radius: 50%;
+  background: var(--chip-bg);
+}
+
+.contact-chip__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.contact-chip__label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.contact-chip__value {
+  font-weight: 600;
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.footer {
+  margin-top: auto;
+  text-align: center;
+  padding: 26px 24px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ==========================================================================
+   רספונסיביות
+   ========================================================================== */
+
+@media (max-width: 720px) {
+  .hero {
+    padding: 56px 20px 44px;
+  }
+
+  .hero__photo-wrap {
+    width: 136px;
+    height: 136px;
+  }
+
+  .section {
+    padding: 36px 18px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero__ctas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .topbar__inner {
+    padding: 12px 16px;
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+
+  .contacts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1000px) {
+  .hero {
+    padding: 96px 24px 72px;
+  }
+}
